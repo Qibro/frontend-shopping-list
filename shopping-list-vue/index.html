@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Shopping List App with Vue.JS</title>
+    <link rel="stylesheet" type="text/css" href="./style.css" />
+  </head>
+  <body>
+    <div id="shopping-list">
+      <div class="header">
+        <h1>{{ header ? header.toLocaleUpperCase() : 'Welcome, Vue!' }}</h1>
+        <button
+          v-if="state === 'default'"
+          v-on:click="changeState('edit')"
+          class="btn btn-primary"
+        >
+          Add Item
+        </button>
+        <button
+          v-else
+          v-on:click="changeState('default')"
+          class="btn btn-cancel"
+        >
+          Cancel
+        </button>
+      </div>
+
+      <div v-if="state === 'edit'" class="add-item-form">
+        <input
+          v-model="newItem"
+          v-on:keyup.enter="saveItem"
+          type="text"
+          placeholder="Add new item"
+        />
+
+        <button
+          class="btn btn-primary"
+          v-bind:disabled="newItem.length === 0"
+          v-on:click="saveItem"
+        >
+          Save Item
+        </button>
+      </div>
+
+      <ul>
+        <li
+          v-for="item in reversedItems"
+          v-bind:class="{ strikeout: item.purchased }"
+          v-on:click="togglePurchased(item)"
+        >
+          {{ item.label }}
+        </li>
+      </ul>
+
+      <button
+        v-if="items.length !== 0"
+        v-on:click="clearItems"
+        class="btn btn-cancel"
+      >
+        Clear list
+      </button>
+
+      <p v-if="items.length === 0">Nice job! You've bought all your items.</p>
+    </div>
+
+    <script src="https://unpkg.com/vue@2.6.11/dist/vue.js"></script>
+    <script>
+      new Vue({
+        el: '#shopping-list',
+        data: {
+          state: 'default',
+          newItem: '',
+          header: 'Shopping list app',
+          items: [],
+        },
+        computed: {
+          reversedItems: function() {
+            return this.items.slice(0).reverse();
+          },
+        },
+        methods: {
+          saveItem: function() {
+            if (this.newItem.trim().length === 0) return;
+            this.items.push({
+              label: this.newItem,
+              purchased: false,
+            });
+            this.newItem = '';
+          },
+          togglePurchased: function(item) {
+            item.purchased = !item.purchased;
+          },
+          clearItems: function() {
+            this.items = [];
+          },
+          changeState: function(newState) {
+            this.state = newState;
+            this.newItem = '';
+          },
+        },
+      });
+    </script>
+  </body>
+</html>

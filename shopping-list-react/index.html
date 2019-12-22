@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Shopping List App with React</title>
+    <link rel="stylesheet" type="text/css" href="./style.css" />
+    <script
+      src="https://unpkg.com/react@16/umd/react.production.min.js"
+      crossorigin
+    ></script>
+    <script
+      src="https://unpkg.com/react-dom@16/umd/react-dom.production.min.js"
+      crossorigin
+    ></script>
+
+    <!-- Don't use this in production: -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  </head>
+  <body>
+    <div id="shopping-list"></div>
+
+    <script type="text/babel">
+      class App extends React.Component {
+        state = {
+          formState: 'default',
+          header: 'Shopping List App',
+          newItem: '',
+          items: [],
+        };
+
+        handleChange = (e) => {
+          this.setState({ newItem: e.target.value });
+        };
+
+        saveItem = () => {
+          if (this.state.newItem.trim().length === 0) return;
+
+          const newItem = {
+            id: new Date().getTime(),
+            label: this.state.newItem,
+            purchased: false,
+          };
+
+          this.setState({ newItem: '', items: [newItem, ...this.state.items] });
+        };
+
+        handleClick = () => {
+          this.saveItem();
+        };
+
+        handleKeyPress = (e) => {
+          const code = e.keyCode || e.which;
+          if (code === 13) {
+            this.saveItem();
+          }
+        };
+
+        handleClearItems = () => {
+          this.setState({ items: [] });
+        };
+
+        handleTogglePurchased = (id) => {
+          const updatedItems = this.state.items.filter((item) => {
+            if (item.id === id) item.purchased = !item.purchased;
+
+            return item;
+          });
+
+          this.setState({ items: updatedItems });
+        };
+
+        handleChangeFormState = (newFormState) => {
+          this.setState({ newItem: '', formState: newFormState });
+        };
+
+        render() {
+          const { header, newItem, items, formState } = this.state;
+          return (
+            <React.Fragment>
+              <div class='header'>
+                <h1>{header ? header.toUpperCase() : 'Welcome, React!'}</h1>
+
+                {formState === 'default' ? (
+                  <button
+                    className='btn btn-primary'
+                    onClick={() => this.handleChangeFormState('edit')}
+                  >
+                    Add Item
+                  </button>
+                ) : (
+                  <button
+                    className='btn btn-cancel'
+                    onClick={() => this.handleChangeFormState('default')}
+                  >
+                    Cancel
+                  </button>
+                )}
+              </div>
+
+              {formState === 'edit' && (
+                <div className='add-item-form'>
+                  <input
+                    type='text'
+                    placeholder='Add new item'
+                    onChange={this.handleChange}
+                    onKeyPress={this.handleKeyPress}
+                    value={newItem}
+                  />
+                  <button
+                    disabled={!this.state.newItem.length}
+                    className='btn btn-primary'
+                    onClick={this.handleClick}
+                  >
+                    Save Item
+                  </button>
+                </div>
+              )}
+
+              <ul>
+                {items.map((item) => {
+                  return (
+                    <li
+                      key={item.id}
+                      class={item.purchased && 'strikeout'}
+                      onClick={() => {
+                        this.handleTogglePurchased(item.id);
+                      }}
+                    >
+                      {item.label}
+                    </li>
+                  );
+                })}
+              </ul>
+
+              {items.length > 0 && (
+                <button
+                  className='btn btn-cancel'
+                  onClick={this.handleClearItems}
+                >
+                  Clear Items
+                </button>
+              )}
+
+              {items.length === 0 && (
+                <p>Nice job!, you've bought all your items.</p>
+              )}
+            </React.Fragment>
+          );
+        }
+      }
+
+      ReactDOM.render(<App />, document.getElementById('shopping-list'));
+    </script>
+  </body>
+</html>
