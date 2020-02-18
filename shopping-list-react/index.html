@@ -25,55 +25,57 @@
           header: 'Shopping List App',
           newItem: '',
           items: [],
-        };
+        }
 
-        handleChange = (e) => {
-          this.setState({ newItem: e.target.value });
-        };
+        handleChange = e => {
+          this.setState({newItem: e.target.value})
+        }
 
         saveItem = () => {
-          if (this.state.newItem.trim().length === 0) return;
+          if (this.state.newItem.trim().length === 0) return
 
           const newItem = {
             id: new Date().getTime(),
             label: this.state.newItem,
             purchased: false,
-          };
+          }
 
-          this.setState({ newItem: '', items: [newItem, ...this.state.items] });
-        };
+          this.setState({newItem: '', items: [newItem, ...this.state.items]})
+        }
 
         handleClick = () => {
-          this.saveItem();
-        };
+          this.saveItem()
+        }
 
-        handleKeyPress = (e) => {
-          const code = e.keyCode || e.which;
+        handleKeyPress = e => {
+          const code = e.keyCode || e.which
           if (code === 13) {
-            this.saveItem();
+            this.saveItem()
           }
-        };
+        }
 
         handleClearItems = () => {
-          this.setState({ items: [] });
-        };
+          this.setState({items: []})
+        }
 
-        handleTogglePurchased = (id) => {
-          const updatedItems = this.state.items.filter((item) => {
-            if (item.id === id) item.purchased = !item.purchased;
+        handleTogglePurchased = id => {
+          const toggleItem = item => {
+            if (item.id === id) item.purchased = !item.purchased
 
-            return item;
-          });
+            return item
+          }
 
-          this.setState({ items: updatedItems });
-        };
+          const updatedItems = this.state.items.filter(toggleItem)
 
-        handleChangeFormState = (newFormState) => {
-          this.setState({ newItem: '', formState: newFormState });
-        };
+          this.setState({items: updatedItems})
+        }
+
+        handleChangeFormState = newFormState => {
+          this.setState({newItem: '', formState: newFormState})
+        }
 
         render() {
-          const { header, newItem, items, formState } = this.state;
+          const {header, newItem, items, formState} = this.state
           return (
             <React.Fragment>
               <div class='header'>
@@ -82,15 +84,13 @@
                 {formState === 'default' ? (
                   <button
                     className='btn btn-primary'
-                    onClick={() => this.handleChangeFormState('edit')}
-                  >
+                    onClick={() => this.handleChangeFormState('edit')}>
                     Add Item
                   </button>
                 ) : (
                   <button
                     className='btn btn-cancel'
-                    onClick={() => this.handleChangeFormState('default')}
-                  >
+                    onClick={() => this.handleChangeFormState('default')}>
                     Cancel
                   </button>
                 )}
@@ -108,34 +108,33 @@
                   <button
                     disabled={!this.state.newItem.length}
                     className='btn btn-primary'
-                    onClick={this.handleClick}
-                  >
+                    onClick={this.handleClick}>
                     Save Item
                   </button>
                 </div>
               )}
 
               <ul>
-                {items.map((item) => {
+                {items.map(item => {
+                  const onHandleTogglePurchased = () => {
+                    this.handleTogglePurchased(item.id)
+                  }
+
                   return (
                     <li
                       key={item.id}
                       class={item.purchased && 'strikeout'}
-                      onClick={() => {
-                        this.handleTogglePurchased(item.id);
-                      }}
-                    >
+                      onClick={onHandleTogglePurchased}>
                       {item.label}
                     </li>
-                  );
+                  )
                 })}
               </ul>
 
               {items.length > 0 && (
                 <button
                   className='btn btn-cancel'
-                  onClick={this.handleClearItems}
-                >
+                  onClick={this.handleClearItems}>
                   Clear Items
                 </button>
               )}
@@ -144,11 +143,11 @@
                 <p>Nice job!, you've bought all your items.</p>
               )}
             </React.Fragment>
-          );
+          )
         }
       }
 
-      ReactDOM.render(<App />, document.getElementById('shopping-list'));
+      ReactDOM.render(<App />, document.getElementById('shopping-list'))
     </script>
   </body>
 </html>
